@@ -1,0 +1,98 @@
+[gd_scene load_steps=11 format=3 uid="uid://bb0p746rt8mde"]
+
+[ext_resource type="Script" uid="uid://q2mxe45nk6qn" path="res://Scripts/main.gd" id="1_8gbba"]
+[ext_resource type="PackedScene" uid="uid://cjvmrmsnpnmr7" path="res://Scenes/car_NEW.tscn" id="4_21xkr"]
+[ext_resource type="Script" uid="uid://bqvo3c1vrie44" path="res://Scripts/ui.gd" id="4_jjvhh"]
+[ext_resource type="PackedScene" uid="uid://b8mdivefjbolp" path="res://Scenes/test_terrain.tscn" id="5_kry3j"]
+[ext_resource type="PackedScene" uid="uid://br3uf8arburja" path="res://Scenes/player.tscn" id="6_21xkr"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_kry3j"]
+
+[sub_resource type="Sky" id="Sky_21xkr"]
+sky_material = SubResource("ProceduralSkyMaterial_kry3j")
+
+[sub_resource type="Environment" id="Environment_kry3j"]
+background_mode = 2
+background_energy_multiplier = 0.8
+sky = SubResource("Sky_21xkr")
+ambient_light_source = 3
+fog_mode = 1
+fog_light_color = Color(0.7221948, 0.69523287, 0.5627016, 1)
+fog_density = 1.0
+fog_depth_curve = 5.0
+fog_depth_begin = 12.0
+fog_depth_end = 200.0
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_6bp64"]
+
+[sub_resource type="Compositor" id="Compositor_344ge"]
+
+[node name="Main" type="Node"]
+script = ExtResource("1_8gbba")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.88573694, -0.19797972, 0.41985005, -0.4587384, -0.51152265, 0.72657007, 0.07091665, -0.8361512, -0.54389536, 0, 3.2758389, 0)
+light_energy = 0.6
+light_specular = 0.8
+light_bake_mode = 1
+shadow_enabled = true
+shadow_bias = 0.0
+shadow_normal_bias = 4.5
+
+[node name="UI" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+size_flags_horizontal = 6
+size_flags_vertical = 6
+script = ExtResource("4_jjvhh")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="DebugOutput" type="VBoxContainer" parent="UI/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_horizontal = 2
+
+[node name="Fps" type="Label" parent="UI/HBoxContainer/DebugOutput"]
+layout_mode = 2
+
+[node name="SpeedNumber" type="Label" parent="UI/HBoxContainer/DebugOutput"]
+layout_mode = 2
+
+[node name="SpeedBar" type="ProgressBar" parent="UI/HBoxContainer/DebugOutput"]
+layout_mode = 2
+max_value = 60.0
+
+[node name="Help" type="VBoxContainer" parent="UI/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 10
+
+[node name="Title" type="Label" parent="UI/HBoxContainer/Help"]
+layout_mode = 2
+text = "Press p to show help"
+
+[node name="Body" type="Label" parent="UI/HBoxContainer/Help"]
+layout_mode = 2
+text = "w & s - accelerate/decelerate & tilt mid-air
+a & d - steer & turn mid-air
+shift - brake
+space - handbreak
+r - reset
+
+p to hide this text"
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_kry3j")
+camera_attributes = SubResource("CameraAttributesPractical_6bp64")
+compositor = SubResource("Compositor_344ge")
+
+[node name="Car" parent="." instance=ExtResource("4_21xkr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="Terrain" parent="." instance=ExtResource("5_kry3j")]
+
+[node name="Player" parent="." instance=ExtResource("6_21xkr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.874264, 1, -2.4488125)

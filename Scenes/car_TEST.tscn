@@ -1,0 +1,191 @@
+[gd_scene load_steps=19 format=3 uid="uid://bytgygpoa0qfn"]
+
+[ext_resource type="Script" uid="uid://3a3dj7jwmg1h" path="res://Scripts/car.gd" id="1_r0y8k"]
+[ext_resource type="Script" uid="uid://frirepejnhkd" path="res://Scripts/wheel.gd" id="2_l1ns7"]
+[ext_resource type="Curve" uid="uid://birlbbt58koad" path="res://Curves/car_tire_BACK.tres" id="3_ujb4n"]
+[ext_resource type="Curve" uid="uid://bf4pfkrg0qanw" path="res://Curves/car_tire_FRONT.tres" id="4_slbln"]
+
+[sub_resource type="Curve" id="Curve_go66d"]
+_data = [Vector2(0, 0.3), 0.0, 0.0, 0, 0, Vector2(0.2, 0.90000004), 0.0, 0.0, 0, 0, Vector2(0.6, 0.7), 0.0, 0.0, 0, 0, Vector2(1, 0.1), 0.0, 0.0, 0, 0]
+point_count = 4
+metadata/_snap_enabled = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jjgbg"]
+albedo_color = Color(1, 0.19, 0.19, 1)
+
+[sub_resource type="PrismMesh" id="PrismMesh_r0y8k"]
+size = Vector3(2, 4, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_go66d"]
+albedo_color = Color(0.46451855, 0.61666155, 0.7789457, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wqo35"]
+size = Vector3(1, 0.5, 1.5)
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_r0y8k"]
+height = 4.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wqo35"]
+albedo_color = Color(0.42, 0.42, 0.42, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_r0y8k"]
+top_radius = 0.8
+bottom_radius = 0.8
+height = 0.4
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_go66d"]
+top_radius = 0.6
+bottom_radius = 0.6
+height = 0.2
+
+[sub_resource type="Gradient" id="Gradient_go66d"]
+offsets = PackedFloat32Array(0, 0.7777778, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 0.6745098, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_1sfmx"]
+gradient = SubResource("Gradient_go66d")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_yi23e"]
+gravity = Vector3(0, 0, 0)
+color_ramp = SubResource("GradientTexture1D_1sfmx")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_u41r7"]
+transparency = 1
+vertex_color_use_as_albedo = true
+
+[sub_resource type="QuadMesh" id="QuadMesh_go66d"]
+material = SubResource("StandardMaterial3D_u41r7")
+size = Vector2(0.6, 1)
+orientation = 1
+
+[node name="Car" type="RigidBody3D" node_paths=PackedStringArray("wheels", "skid_marks")]
+mass = 50.0
+script = ExtResource("1_r0y8k")
+wheels = [NodePath("Wheels/WheelBR"), NodePath("Wheels/WheelBL"), NodePath("Wheels/WheelFR"), NodePath("Wheels/WheelFL")]
+acceleration = 2000.0
+max_speed = 100.0
+accel_curve = SubResource("Curve_go66d")
+skid_marks = [NodePath("SkidMarks/GPUParticles3D"), NodePath("SkidMarks/GPUParticles3D2"), NodePath("SkidMarks/GPUParticles3D3"), NodePath("SkidMarks/GPUParticles3D4")]
+total_wheels = 4
+
+[node name="Body" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, -0.2)
+material_override = SubResource("StandardMaterial3D_jjgbg")
+mesh = SubResource("PrismMesh_r0y8k")
+
+[node name="Head" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.28632987, 0.98012376)
+material_override = SubResource("StandardMaterial3D_go66d")
+mesh = SubResource("BoxMesh_wqo35")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, -0.19160658)
+shape = SubResource("CapsuleShape3D_r0y8k")
+
+[node name="Wheels" type="Node3D" parent="."]
+
+[node name="WheelBR" type="RayCast3D" parent="Wheels"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 0, 1.2)
+enabled = false
+target_position = Vector3(0, 0, 0)
+script = ExtResource("2_l1ns7")
+spring_strength = 5000
+spring_damping = 120.0
+rest_dist = 0.3
+over_extend = 0.3
+wheel_radius = 0.8
+is_motor = true
+grip_curve = ExtResource("3_ujb4n")
+
+[node name="Wheel" type="MeshInstance3D" parent="Wheels/WheelBR"]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, -0.5, 0)
+material_override = SubResource("StandardMaterial3D_wqo35")
+mesh = SubResource("CylinderMesh_r0y8k")
+
+[node name="WheelBL" type="RayCast3D" parent="Wheels"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 0, 1.2)
+enabled = false
+target_position = Vector3(0, 0, 0)
+script = ExtResource("2_l1ns7")
+spring_strength = 5000
+spring_damping = 120.0
+rest_dist = 0.3
+over_extend = 0.3
+wheel_radius = 0.8
+is_motor = true
+grip_curve = ExtResource("3_ujb4n")
+
+[node name="Wheel" type="MeshInstance3D" parent="Wheels/WheelBL"]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, -0.5, 0)
+material_override = SubResource("StandardMaterial3D_wqo35")
+mesh = SubResource("CylinderMesh_r0y8k")
+
+[node name="WheelFR" type="RayCast3D" parent="Wheels"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.70749366, 0, -1.2)
+enabled = false
+target_position = Vector3(0, 0, 0)
+script = ExtResource("2_l1ns7")
+spring_strength = 5000
+spring_damping = 120.0
+rest_dist = 0.3
+over_extend = 0.3
+wheel_radius = 0.6
+is_steer = true
+grip_curve = ExtResource("4_slbln")
+
+[node name="Wheel" type="MeshInstance3D" parent="Wheels/WheelFR"]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, -0.5, 0)
+material_override = SubResource("StandardMaterial3D_wqo35")
+mesh = SubResource("CylinderMesh_go66d")
+
+[node name="WheelFL" type="RayCast3D" parent="Wheels"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 0, -1.2)
+enabled = false
+target_position = Vector3(0, 0, 0)
+script = ExtResource("2_l1ns7")
+spring_strength = 5000
+spring_damping = 120.0
+rest_dist = 0.3
+over_extend = 0.3
+wheel_radius = 0.6
+is_steer = true
+grip_curve = ExtResource("4_slbln")
+
+[node name="Wheel" type="MeshInstance3D" parent="Wheels/WheelFL"]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, -0.5, 0)
+material_override = SubResource("StandardMaterial3D_wqo35")
+mesh = SubResource("CylinderMesh_go66d")
+
+[node name="SkidMarks" type="Node3D" parent="."]
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="SkidMarks"]
+emitting = false
+amount = 150
+lifetime = 1.5
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_yi23e")
+draw_pass_1 = SubResource("QuadMesh_go66d")
+
+[node name="GPUParticles3D2" type="GPUParticles3D" parent="SkidMarks"]
+emitting = false
+amount = 150
+lifetime = 1.5
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_yi23e")
+draw_pass_1 = SubResource("QuadMesh_go66d")
+
+[node name="GPUParticles3D3" type="GPUParticles3D" parent="SkidMarks"]
+emitting = false
+amount = 150
+lifetime = 1.5
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_yi23e")
+draw_pass_1 = SubResource("QuadMesh_go66d")
+
+[node name="GPUParticles3D4" type="GPUParticles3D" parent="SkidMarks"]
+emitting = false
+amount = 150
+lifetime = 1.5
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_yi23e")
+draw_pass_1 = SubResource("QuadMesh_go66d")

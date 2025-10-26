@@ -1,0 +1,195 @@
+[gd_scene load_steps=12 format=3 uid="uid://c3jvm2ogc8nle"]
+
+[ext_resource type="Script" uid="uid://ckespb8ucgakj" path="res://Scripts/wheel_NEW.gd" id="1_sj4lg"]
+[ext_resource type="Curve" uid="uid://birlbbt58koad" path="res://Curves/car_tire_BACK.tres" id="2_lsutt"]
+[ext_resource type="Texture2D" uid="uid://d064u4d6q648k" path="res://Texturelabs_Brick_128L.jpg" id="3_7voqc"]
+[ext_resource type="PackedScene" uid="uid://b6d8ei88r7dcd" path="res://Models/wheel.glb" id="3_lsutt"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jbbly"]
+albedo_texture = ExtResource("3_7voqc")
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_go66d"]
+material = SubResource("StandardMaterial3D_jbbly")
+top_radius = 0.7
+bottom_radius = 0.7
+height = 0.5
+
+[sub_resource type="Gradient" id="Gradient_jc6qf"]
+offsets = PackedFloat32Array(0, 0.15757576, 0.58787876, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0, 0, 0, 0.818268, 0, 0, 0, 0.6745098, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_1sfmx"]
+gradient = SubResource("Gradient_jc6qf")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_lshy5"]
+gravity = Vector3(0, 0, 0)
+color_ramp = SubResource("GradientTexture1D_1sfmx")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_u41r7"]
+transparency = 1
+vertex_color_use_as_albedo = true
+
+[sub_resource type="QuadMesh" id="QuadMesh_eexu6"]
+material = SubResource("StandardMaterial3D_u41r7")
+size = Vector2(0.6, 1)
+orientation = 1
+
+[node name="WheelBR" type="Node3D"]
+script = ExtResource("1_sj4lg")
+wheel_radius = 0.7
+grip_curve = ExtResource("2_lsutt")
+metadata/_custom_type_script = "uid://ckespb8ucgakj"
+
+[node name="Wheel" parent="." instance=ExtResource("3_lsutt")]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="debug_wheel" type="MeshInstance3D" parent="."]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 0, 0)
+visible = false
+mesh = SubResource("CylinderMesh_go66d")
+
+[node name="DebugLabel" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+visible = false
+pixel_size = 0.01
+billboard = 2
+text = "debug
+"
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.59, 0)
+emitting = false
+amount = 700
+lifetime = 5.0
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_lshy5")
+draw_pass_1 = SubResource("QuadMesh_eexu6")
+
+[node name="Rays" type="Node3D" parent="."]
+
+[node name="Main" type="Node3D" parent="Rays"]
+
+[node name="RayCast3D" type="RayCast3D" parent="Rays/Main"]
+collision_mask = 2
+debug_shape_custom_color = Color(0.5074299, 0.29259998, 0.77, 1)
+debug_shape_thickness = 5
+
+[node name="Lean1" type="Node3D" parent="Rays"]
+transform = Transform3D(0.9848077, 0.17364818, 0, -0.17364818, 0.9848077, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="RayCast3D" type="RayCast3D" parent="Rays/Lean1"]
+collision_mask = 2
+debug_shape_custom_color = Color(0.5074299, 0.29259998, 0.77, 1)
+debug_shape_thickness = 5
+
+[node name="Lean2" type="Node3D" parent="Rays"]
+transform = Transform3D(0.98480767, -0.17364816, 0, 0.17364816, 0.98480767, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="RayCast3D" type="RayCast3D" parent="Rays/Lean2"]
+collision_mask = 2
+debug_shape_custom_color = Color(0.5074299, 0.29259998, 0.77, 1)
+debug_shape_thickness = 5
+
+[node name="Lean3" type="Node3D" parent="Rays"]
+transform = Transform3D(0.98480767, 0.17364818, 0, -0.15038373, 0.85286844, -0.5, -0.08682409, 0.49240384, 0.8660254, 0, 0, 0)
+
+[node name="RayCast3D" type="RayCast3D" parent="Rays/Lean3"]
+collision_mask = 2
+debug_shape_custom_color = Color(0.5074299, 0.29259998, 0.77, 1)
+debug_shape_thickness = 5
+
+[node name="Lean4" type="Node3D" parent="Rays"]
+transform = Transform3D(0.9848076, -0.17364816, 0, 0.15038371, 0.8528684, -0.5, 0.08682408, 0.4924038, 0.8660254, 0, 0, 0)
+
+[node name="RayCast3D" type="RayCast3D" parent="Rays/Lean4"]
+collision_mask = 2
+debug_shape_custom_color = Color(0.5074299, 0.29259998, 0.77, 1)
+debug_shape_thickness = 5
+
+[node name="Lean5" type="Node3D" parent="Rays"]
+transform = Transform3D(0.9848076, 0.17364818, 6.762175e-09, -0.15038373, 0.8528684, 0.49999997, 0.08682408, -0.4924038, 0.8660253, 0, 0, 0)
+
+[node name="RayCast3D" type="RayCast3D" parent="Rays/Lean5"]
+collision_mask = 2
+debug_shape_custom_color = Color(0.5074299, 0.29259998, 0.77, 1)
+debug_shape_thickness = 5
+
+[node name="Lean6" type="Node3D" parent="Rays"]
+transform = Transform3D(0.98480755, -0.17364816, 4.7694155e-09, 0.15038371, 0.8528683, 0.49999997, -0.08682409, -0.49240378, 0.8660253, 0, 0, 0)
+
+[node name="RayCast3D" type="RayCast3D" parent="Rays/Lean6"]
+collision_mask = 2
+debug_shape_custom_color = Color(0.5074299, 0.29259998, 0.77, 1)
+debug_shape_thickness = 5
+
+[node name="Node3D" type="Node3D" parent="Rays"]
+transform = Transform3D(1, 0, 0, 0, 0.93969256, 0.3420201, 0, -0.3420201, 0.93969256, 0, 0, 0)
+
+[node name="RayCast3D" type="RayCast3D" parent="Rays/Node3D"]
+transform = Transform3D(1, 0, 0, 0, 1.0000001, 0, 0, 0, 1.0000001, 0, 0, 0)
+collision_mask = 2
+debug_shape_custom_color = Color(0.5074299, 0.29259998, 0.77, 1)
+debug_shape_thickness = 5
+
+[node name="Node3D2" type="Node3D" parent="Rays"]
+transform = Transform3D(1, 0, 0, 0, 0.9396926, -0.34202012, 0, 0.34202012, 0.9396926, 0, 0, 0)
+
+[node name="RayCast3D" type="RayCast3D" parent="Rays/Node3D2"]
+transform = Transform3D(1, 0, 0, 0, 1.0000001, 0, 0, 0, 1.0000001, 0, 0, 0)
+collision_mask = 2
+debug_shape_custom_color = Color(0.5074299, 0.29259998, 0.77, 1)
+debug_shape_thickness = 5
+
+[node name="Node3D3" type="Node3D" parent="Rays"]
+transform = Transform3D(1, 0, 0, 0, 0.76604444, 0.6427876, 0, -0.6427876, 0.76604444, 0, 0, 0)
+
+[node name="RayCast3D" type="RayCast3D" parent="Rays/Node3D3"]
+transform = Transform3D(1, 0, 0, 0, 1.0000001, 0, 0, 0, 1.0000001, 0, 0, 0)
+collision_mask = 2
+debug_shape_custom_color = Color(0.5074299, 0.29259998, 0.77, 1)
+debug_shape_thickness = 5
+
+[node name="Node3D4" type="Node3D" parent="Rays"]
+transform = Transform3D(1, 0, 0, 0, 0.76604444, -0.6427876, 0, 0.6427876, 0.76604444, 0, 0, 0)
+
+[node name="RayCast3D" type="RayCast3D" parent="Rays/Node3D4"]
+transform = Transform3D(1, 0, 0, 0, 1.0000001, 0, 0, 0, 1.0000001, 0, 0, 0)
+collision_mask = 2
+debug_shape_custom_color = Color(0.5074299, 0.29259998, 0.77, 1)
+debug_shape_thickness = 5
+
+[node name="Node3D5" type="Node3D" parent="Rays"]
+transform = Transform3D(1, 0, 0, 0, 0.49999997, 0.86602545, 0, -0.86602545, 0.49999997, 0, 0, 0)
+
+[node name="RayCast3D" type="RayCast3D" parent="Rays/Node3D5"]
+transform = Transform3D(1, 0, 0, 0, 1.0000001, 0, 0, 0, 1.0000001, 0, 0, 0)
+collision_mask = 2
+debug_shape_custom_color = Color(0.5074299, 0.29259998, 0.77, 1)
+debug_shape_thickness = 5
+
+[node name="Node3D6" type="Node3D" parent="Rays"]
+transform = Transform3D(1, 0, 0, 0, 0.49999997, -0.86602545, 0, 0.86602545, 0.49999997, 0, 0, 0)
+
+[node name="RayCast3D" type="RayCast3D" parent="Rays/Node3D6"]
+transform = Transform3D(1, 0, 0, 0, 1.0000001, 0, 0, 0, 1.0000001, 0, 0, 0)
+collision_mask = 2
+debug_shape_custom_color = Color(0.5074299, 0.29259998, 0.77, 1)
+debug_shape_thickness = 5
+
+[node name="Node3D7" type="Node3D" parent="Rays"]
+transform = Transform3D(1, 0, 0, 0, 0.17364822, 0.9848077, 0, -0.9848077, 0.17364822, 0, 0, 0)
+
+[node name="RayCast3D" type="RayCast3D" parent="Rays/Node3D7"]
+transform = Transform3D(1, 0, 0, 0, 1.0000001, 0, 0, 0, 1.0000001, 0, 0, 0)
+collision_mask = 2
+debug_shape_custom_color = Color(0.5074299, 0.29259998, 0.77, 1)
+debug_shape_thickness = 5
+
+[node name="Node3D8" type="Node3D" parent="Rays"]
+transform = Transform3D(1, 0, 0, 0, 0.17364822, -0.9848077, 0, 0.9848077, 0.17364822, 0, 0, 0)
+
+[node name="RayCast3D" type="RayCast3D" parent="Rays/Node3D8"]
+transform = Transform3D(1, 0, 0, 0, 1.0000001, 0, 0, 0, 1.0000001, 0, 0, 0)
+collision_mask = 2
+debug_shape_custom_color = Color(0.5074299, 0.29259998, 0.77, 1)
+debug_shape_thickness = 5

@@ -1,0 +1,37 @@
+[gd_scene load_steps=6 format=3 uid="uid://t8bkwlxtku7u"]
+
+[ext_resource type="PackedScene" uid="uid://dke76uldnrnmu" path="res://Models/tiles.glb" id="1_epxfo"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_epxfo"]
+size = Vector3(1, 0.2, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_voap8"]
+size = Vector3(0.2, 2, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_trnc7"]
+size = Vector3(1, 0.2, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_3ub58"]
+size = Vector3(0.2, 2, 1)
+
+[node name="tiles" instance=ExtResource("1_epxfo")]
+
+[node name="CollisionShape3D" parent="wall-corner/StaticBody3D" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.1, -0.1, 0.1)
+shape = SubResource("BoxShape3D_epxfo")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="wall-corner/StaticBody3D" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 1, 0)
+shape = SubResource("BoxShape3D_voap8")
+
+[node name="CollisionShape3D3" type="CollisionShape3D" parent="wall-corner/StaticBody3D" index="2"]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, 1, -0.5)
+shape = SubResource("BoxShape3D_voap8")
+
+[node name="CollisionShape3D" parent="wall/StaticBody3D" index="0"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+shape = SubResource("BoxShape3D_trnc7")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="wall/StaticBody3D" index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 1, 0)
+shape = SubResource("BoxShape3D_3ub58")

@@ -1,0 +1,62 @@
+[gd_scene load_steps=11 format=3 uid="uid://cy7efd0p12lqa"]
+
+[ext_resource type="Script" uid="uid://3a3dj7jwmg1h" path="res://Scripts/car.gd" id="1_k4n05"]
+[ext_resource type="Curve" uid="uid://5g6u1nsi76jj" path="res://Curves/car_accel_DEFAULT.tres" id="2_0ndsb"]
+[ext_resource type="Curve" uid="uid://cyotwoow5k0sd" path="res://Curves/car_handling_DEFAULT.tres" id="3_1c4pg"]
+[ext_resource type="Curve" uid="uid://bf4pfkrg0qanw" path="res://Curves/car_tire_FRONT.tres" id="4_0ndsb"]
+[ext_resource type="PackedScene" uid="uid://cujy863rbiork" path="res://Scenes/wheel.tscn" id="4_oabgm"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jjgbg"]
+albedo_color = Color(1, 0.19, 0.19, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_8gbba"]
+size = Vector3(1.7, 0.5, 3.5)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_go66d"]
+albedo_color = Color(0.46451855, 0.61666155, 0.7789457, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wqo35"]
+size = Vector3(1, 0.5, 1.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1c4pg"]
+size = Vector3(1.7, 0.5, 3)
+
+[node name="Car" type="RigidBody3D" node_paths=PackedStringArray("wheels")]
+mass = 50.0
+script = ExtResource("1_k4n05")
+wheels = [NodePath("Wheels/WheelBR"), NodePath("Wheels/WheelBL"), NodePath("Wheels/WheelFR"), NodePath("Wheels/WheelFL")]
+accel_curve = ExtResource("2_0ndsb")
+handling_curve = ExtResource("3_1c4pg")
+total_wheels = 4
+
+[node name="Body" type="MeshInstance3D" parent="."]
+material_override = SubResource("StandardMaterial3D_jjgbg")
+mesh = SubResource("BoxMesh_8gbba")
+
+[node name="Head" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.28632987, 0.98012376)
+material_override = SubResource("StandardMaterial3D_go66d")
+mesh = SubResource("BoxMesh_wqo35")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_1c4pg")
+
+[node name="Wheels" type="Node3D" parent="."]
+
+[node name="WheelBR" parent="Wheels" instance=ExtResource("4_oabgm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 0, 1.2)
+
+[node name="WheelBL" parent="Wheels" instance=ExtResource("4_oabgm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 0, 1.2)
+
+[node name="WheelFR" parent="Wheels" instance=ExtResource("4_oabgm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 0, -1.2)
+is_motor = true
+is_steer = true
+grip_curve = ExtResource("4_0ndsb")
+
+[node name="WheelFL" parent="Wheels" instance=ExtResource("4_oabgm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 0, -1.2)
+is_motor = true
+is_steer = true
+grip_curve = ExtResource("4_0ndsb")

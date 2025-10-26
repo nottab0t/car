@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3 uid="uid://cmhpn063g5u3p"]
+
+[ext_resource type="PackedScene" uid="uid://bsha43r7ibiyk" path="res://Models/sand_tiles.glb" id="1_ury2f"]
+
+[node name="sand_tiles" instance=ExtResource("1_ury2f")]
