@@ -1,9 +1,10 @@
-[gd_scene load_steps=11 format=3 uid="uid://bb0p746rt8mde"]
+[gd_scene load_steps=12 format=3 uid="uid://bb0p746rt8mde"]
 
 [ext_resource type="Script" uid="uid://q2mxe45nk6qn" path="res://Scripts/main.gd" id="1_8gbba"]
 [ext_resource type="PackedScene" uid="uid://cjvmrmsnpnmr7" path="res://Scenes/car_NEW.tscn" id="4_21xkr"]
 [ext_resource type="Script" uid="uid://bqvo3c1vrie44" path="res://Scripts/ui.gd" id="4_jjvhh"]
 [ext_resource type="PackedScene" uid="uid://b8mdivefjbolp" path="res://Scenes/test_terrain.tscn" id="5_kry3j"]
+[ext_resource type="PackedScene" uid="uid://hru3l45mqxhq" path="res://Scenes/smg.tscn" id="6_6bp64"]
 [ext_resource type="PackedScene" uid="uid://br3uf8arburja" path="res://Scenes/player.tscn" id="6_21xkr"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_kry3j"]
@@ -96,3 +97,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
 [node name="Player" parent="." instance=ExtResource("6_21xkr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.874264, 1, -2.4488125)
+speed = 5.0
+run_speed = 10.0
+sens = 0.005
+controller_sens = 1.5
+
+[node name="smg" parent="." instance=ExtResource("6_6bp64")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.7080812, 1.7420218, -7.8729)

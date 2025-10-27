@@ -58,7 +58,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, 0, -1.8)
 visible = false
 light_color = Color(0.93623257, 0.8513082, 0.6231731, 1)
 light_energy = 16.0
-shadow_bias = 2.0
+shadow_bias = 0.0
+shadow_opacity = 0.6
 spot_range = 80.0
 
 [node name="HeadlightL" type="SpotLight3D" parent="Lights/Headlights"]
@@ -66,7 +67,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.75, 0, -1.8)
 visible = false
 light_color = Color(0.93623257, 0.8513082, 0.6231731, 1)
 light_energy = 16.0
-shadow_bias = 2.0
+shadow_bias = 0.0
+shadow_opacity = 0.6
 spot_range = 80.0
 
 [node name="HeadlightR2" type="OmniLight3D" parent="Lights/Headlights"]
