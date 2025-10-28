@@ -97,10 +97,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
 [node name="Player" parent="." instance=ExtResource("6_21xkr")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.874264, 1, -2.4488125)
-speed = 5.0
-run_speed = 10.0
-sens = 0.005
-controller_sens = 1.5
 
 [node name="smg" parent="." instance=ExtResource("6_6bp64")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.7080812, 1.7420218, -7.8729)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0034599, 0.17251535, -6.496609)

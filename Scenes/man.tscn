@@ -1,9 +1,9 @@
 [gd_scene load_steps=3 format=3 uid="uid://c260gdn555o6y"]
 
-[ext_resource type="PackedScene" uid="uid://tuvna3s0tomw" path="res://Models/man.glb" id="1_q5hwx"]
-[ext_resource type="AnimationLibrary" uid="uid://m4nab2sut2am" path="res://Scenes/man_animation.tres" id="2_pfq2x"]
+[ext_resource type="PackedScene" uid="uid://x7cgb6qhcgib" path="res://Models/man.glb" id="1_l6lx3"]
+[ext_resource type="AnimationLibrary" uid="uid://m4nab2sut2am" path="res://Scenes/man_animation.tres" id="2_q5hwx"]
 
-[node name="man2" instance=ExtResource("1_q5hwx")]
+[node name="man2" instance=ExtResource("1_l6lx3")]
 
 [node name="Skeleton3D" parent="Armature" index="0"]
 bones/0/position = Vector3(-4.440892e-16, 0.93173, -1.3168792e-09)
@@ -32,5 +32,5 @@ bones/17/rotation = Quaternion(0.022417659, 0.70675135, -0.70675135, -0.02241765
 
 [node name="AnimationPlayer" parent="." index="1"]
 libraries = {
-&"": ExtResource("2_pfq2x")
+&"": ExtResource("2_q5hwx")
 }

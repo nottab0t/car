@@ -7,13 +7,23 @@ class_name Item
 @onready var collision := $CollisionShape3D
 @onready var model := $model 
 
-var signal_connected := false
-var near_player := false
+# related objects
 var player : Player
 var main : Main
+
+var signal_connected := false
+var near_player := false
+var player_targeting := false
 var equipped := false
 var grip_offset : Vector3
 var gripped_rotation := Vector3(deg_to_rad(-90), 0, deg_to_rad(180))
+
+# properties
+var holdable := true
+var item_class := "gun"
+var item_name := "SMG"
+var default_text := item_name + "\n<E to Take>\n|"
+var pickup_text := item_name + "\n<E to Take>\n<F to Equip>\n|"
 
 
 # called by player when they are nearby
@@ -40,6 +50,8 @@ func _left_player_area(_body: Node3D):
 func _physics_process(_delta: float) -> void:
 	# keep label from rotating with item
 	label.global_position = self.global_position + Vector3.UP * 0.75
+	if player_targeting and not player.holding_item: label.text = pickup_text
+	else: label.text = default_text
 	
 	if equipped:
 		# match position and basis to player main hand
@@ -57,6 +69,8 @@ func _physics_process(_delta: float) -> void:
 			model.position = Vector3.ZERO
 			self.linear_velocity = Vector3.ZERO
 			player.drop_item_anim()
+			player.holding_item = false
+			player.equipped_item = null
 			# reparent back to main
 			self.reparent(main)
 		
@@ -67,11 +81,11 @@ func _physics_process(_delta: float) -> void:
 	if not near_player: return
 	# player picks up item into storage
 	if Input.is_action_pressed("pickup_item"):
-		# update player inventory somehow
+		## update player inventory somehow
 		queue_free()
 	
 	# player equips item from ground
-	if Input.is_action_pressed("equip_item"):
+	if Input.is_action_pressed("equip_item") and not player.holding_item:
 		equipped = true
 		collision.disabled = true
 		# adjust model to match hand
@@ -80,4 +94,6 @@ func _physics_process(_delta: float) -> void:
 		# reparent to make position/rotation easy
 		self.reparent(player.armature)
 		player.hold_item_anim("Smg")
+		player.holding_item = true
+		player.equipped_item = self
 		
