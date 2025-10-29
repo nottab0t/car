@@ -38,9 +38,6 @@ var running_lights : Array[Light3D]
 @onready var doors := $Doors
 @onready var doorLabel := $Doors/DoorLabel
 
-func get_speed() -> float:
-	return speed
-
 func get_cam() -> Camera3D:
 	return cam
 
@@ -122,7 +119,8 @@ func _physics_process(delta: float) -> void:
 		for light in running_lights: light.hide()
 		motor_input = 0
 	grounded = false
-	speed = linear_velocity.length()
+	var local_velocity = -linear_velocity.dot(global_transform.basis.z) 
+	speed = local_velocity
 	for wheel in wheels:
 		wheel.apply_wheel_physics(self)
 		wheel.handle_slipping(self)

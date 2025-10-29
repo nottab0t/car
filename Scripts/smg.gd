@@ -21,6 +21,7 @@ var gripped_rotation := Vector3(deg_to_rad(-90), 0, deg_to_rad(180))
 # properties
 var holdable := true
 var item_class := "gun"
+var hold_anim_name := "Smg"
 var item_name := "SMG"
 var default_text := item_name + "\n<E to Take>\n|"
 var pickup_text := item_name + "\n<E to Take>\n<F to Equip>\n|"
@@ -32,7 +33,7 @@ func link_item(area: Area3D) -> void:
 	near_player = true
 	
 	# connect signal if this is the first interaction with player
-	if signal_connected: return
+	if area.body_exited.is_connected(_left_player_area): return
 	area.body_exited.connect(_left_player_area)
 	player = area.get_parent()
 	signal_connected = true
@@ -40,6 +41,11 @@ func link_item(area: Area3D) -> void:
 func _ready() -> void:
 	grip_offset = main_grip.position
 	main = get_parent()
+
+
+func _match_position_to_hand() -> void:
+	if equipped:
+		transform = player.skeleton.get_bone_global_pose(player.main_hand_bone_id) * player.skeleton.transform
 	
 
 # called via signal when player is no longer nearby
@@ -55,8 +61,9 @@ func _physics_process(_delta: float) -> void:
 	
 	if equipped:
 		# match position and basis to player main hand
-		position = player.main_hand_pos
-		basis = player.main_hand_rot
+		#transform = player.main_hand_transform
+		## new
+		
 		
 		# drop item only if equipped
 		if Input.is_action_pressed("drop_item"):
@@ -93,7 +100,9 @@ func _physics_process(_delta: float) -> void:
 		model.rotation = gripped_rotation
 		# reparent to make position/rotation easy
 		self.reparent(player.armature)
-		player.hold_item_anim("Smg")
+		player.hold_item_anim(self)
 		player.holding_item = true
 		player.equipped_item = self
+		if player.skeleton.skeleton_updated.is_connected(_match_position_to_hand): return
+		player.skeleton.skeleton_updated.connect(_match_position_to_hand)
 		

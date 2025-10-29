@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3 uid="uid://cj3djwy8fpocp"]
+
+[ext_resource type="PackedScene" uid="uid://brgppecm4nb8r" path="res://Models/mach1.glb" id="1_t0cvp"]
+
+[node name="mach1" instance=ExtResource("1_t0cvp")]

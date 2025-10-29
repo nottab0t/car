@@ -4,53 +4,89 @@ class_name Player
 const JUMP_VELOCITY = 5.0
 const LERP_VAL = .15
 
-@export var speed := 5.0
+var speed := 5.0
+@export var aim_speed := 2.5
+@export var walk_speed := 5.0
 @export var run_speed := 10.0
 
 @export var sens := 0.005
 @export var controller_sens := 1.5
+@export var cam_zoom_speed := 20
 
 # children
 @onready var main : Main = self.get_parent()
 @onready var cam := $CamOrigin/SpringArm3D/PlayerCamera
 @onready var cam_arm := $CamOrigin/SpringArm3D
 @onready var pivot := $CamOrigin
-@onready var armature : Node3D = $Armature
+@onready var armature : Node3D = $man2/Armature
 @onready var anim_tree : AnimationTree = $AnimationTree
 @onready var debug_label : Label3D = $DebugLabel
 @onready var interact_trigger : Area3D = $InteractTrigger
-@onready var skeleton : Skeleton3D = $Armature/Skeleton3D
+@onready var skeleton : Skeleton3D = $man2/Armature/Skeleton3D
+@onready var aim_target : Marker3D = $CamOrigin/SpringArm3D/PlayerCamera/AimTarget
+@onready var body_rotation_mod : SkeletonModifier3D = $man2/Armature/Skeleton3D/BodyRotation
+@onready var reticle : Label3D = $CamOrigin/SpringArm3D/PlayerCamera/AimTarget/Reticle
 
-var main_hand_pos : Vector3
-var main_hand_rot : Basis
-var main_hand_offset : float
-var off_hand_pos : Vector3
-var off_hand_rot : Basis
+# bone names/ids
+var main_hand_bone := "hand.r"
+@onready var main_hand_bone_id := skeleton.find_bone(main_hand_bone)
+var off_hand_bone := "hand.l"
+@onready var off_hand_bone_id := skeleton.find_bone(off_hand_bone)
+var upperbody_bone := "body"
+@onready var upperbody_bone_id := skeleton.find_bone(upperbody_bone)
 
+# hand positions
+var main_hand_transform : Transform3D
+var off_hand_transform : Transform3D
+
+# animations
+var anim_arm_blend := "parameters/Arm Blend/blend_amount"
+# static anims
+var walk_anim := "parameters/Walk Blend/blend_amount"
+var walk_anim_speed := "parameters/Walk Scale/scale"
+var run_anim := "parameters/Run Blend/blend_amount"
+# dynamic anims
 var held_anim := "none"
 var held_anim_run := "none"
+var aim_anim := "none"
 
+# items
 var closest_item : Item = null
-var holding_item := false
 var equipped_item : Item = null
+
+# states
 var aiming := false
 var running := false
+var holding_item := false
 
 func get_cam() -> Camera3D:
 	return cam
 
-func hold_item_anim(item: String) -> void:
-	anim_tree.set("parameters/Arm Blend/blend_amount", 1)
-	held_anim = "parameters/" + item + " Hold Blend/blend_amount"
-	held_anim_run = "parameters/" + item + " Hold Run Blend/blend_amount"
+func hold_item_anim(item: Item) -> void:
+	anim_tree.set(anim_arm_blend, 1)
+	held_anim = "parameters/" + item.hold_anim_name + " Hold Blend/blend_amount"
+	held_anim_run = "parameters/" + item.hold_anim_name + " Hold Run Blend/blend_amount"
 	anim_tree.set(held_anim, 1)
+	if item.item_class == "gun":
+		aim_anim = "parameters/" + item.hold_anim_name + " Aim Blend/blend_amount"
 
 func drop_item_anim() -> void:
 	anim_tree.set(held_anim, 0)
 	anim_tree.set(held_anim_run, 0)
+	anim_tree.set(aim_anim, 0)
 	held_anim = "none"
 	held_anim_run = "none"
-	
+	aim_anim = "none"
+
+func _calc_global_bone_transform(bone_id: int) -> Transform3D:
+	var bone_pos: Transform3D = skeleton.get_bone_global_pose(bone_id)
+	var global_bone_pos: Transform3D = skeleton.global_transform * bone_pos
+	return global_bone_pos
+
+func _calc_local_bone_transform(bone_id: int) -> Transform3D:
+	var bone_pos: Transform3D = skeleton.get_bone_global_pose(bone_id)
+	var local_bone_pos: Transform3D = skeleton.transform * bone_pos
+	return local_bone_pos
 
 func _body_exited(body: Node3D):
 	body.label.visible = false
@@ -63,7 +99,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		pivot.rotate_y(-event.relative.x * sens)
 		cam_arm.rotate_x(-event.relative.y * sens)
-		cam_arm.rotation.x = clamp(cam_arm.rotation.x, deg_to_rad(-75), deg_to_rad(20))
+		cam_arm.rotation.x = clamp(cam_arm.rotation.x, deg_to_rad(-75), deg_to_rad(30))
 
 func _physics_process(delta: float) -> void:
 	
@@ -117,7 +153,7 @@ func _physics_process(delta: float) -> void:
 		speed = run_speed
 		running = true
 		aiming = false
-		anim_tree.set("parameters/Smg Aim Blend/blend_amount", 0)
+		anim_tree.set(aim_anim, 0)
 		if not held_anim_run == "none": 
 			anim_tree.set(held_anim, 0)
 			anim_tree.set(held_anim_run, 1)
@@ -130,22 +166,29 @@ func _physics_process(delta: float) -> void:
 	
 	# zoom
 	if Input.is_action_pressed("zoom"): 
-		cam_arm.spring_length = 1.5
-		cam_arm.position.x = 1
+		cam_arm.spring_length = lerpf(cam_arm.spring_length, 1.5, delta * cam_zoom_speed)
+		cam_arm.position.x = lerpf(cam_arm.position.x, 1, delta * cam_zoom_speed)
 		if holding_item and equipped_item.item_class == "gun" and not running:
 			aiming = true
-			anim_tree.set("parameters/Smg Aim Blend/blend_amount", 1)
+			anim_tree.set(aim_anim, 1)
+			speed = aim_speed
 	else: 
-		cam_arm.spring_length = 4.0
-		cam_arm.position.x = 0
+		cam_arm.spring_length = lerpf(cam_arm.spring_length, 4.0, delta * cam_zoom_speed)
+		cam_arm.position.x = lerpf(cam_arm.position.x, 0, delta * cam_zoom_speed)
 		aiming = false
-		anim_tree.set("parameters/Smg Aim Blend/blend_amount", 0)
+		anim_tree.set(aim_anim, 0)
 	
 	
 	
 	# walk & run animations
-	anim_tree.set("parameters/Walk Blend/blend_amount", velocity.length() / 5)
-	anim_tree.set("parameters/Run Blend/blend_amount", clampf((velocity.length() / 5) - 1, 0, 1))
+	if aiming:
+		anim_tree.set(walk_anim, (velocity.length() / 5) * 0.7)
+		anim_tree.set(walk_anim_speed, 1.2)
+	else:
+		anim_tree.set(walk_anim, velocity.length() / 5)
+		anim_tree.set(walk_anim_speed, 0.9)
+	
+	anim_tree.set(run_anim, clampf((velocity.length() / 5) - 1, 0, 1))
 	
 	# jump
 	if Input.is_action_just_pressed("jump") and is_on_floor():
@@ -153,8 +196,8 @@ func _physics_process(delta: float) -> void:
 
 	# jump/fall animation
 	if not is_on_floor():
-		anim_tree.set("parameters/Walk Blend/blend_amount", 0)
-		anim_tree.set("parameters/Run Blend/blend_amount", 0)
+		anim_tree.set(walk_anim, 0)
+		anim_tree.set(run_anim, 0)
 		if not held_anim_run == "none": 
 			anim_tree.set(held_anim, 0)
 			anim_tree.set(held_anim_run, 1)
@@ -162,9 +205,13 @@ func _physics_process(delta: float) -> void:
 		if velocity.y > 0:
 			anim_tree.set("parameters/Jump Scale/scale", 0.5)
 			anim_tree.set("parameters/Jump Blend/blend_amount", 1)
+			if aiming:
+				anim_tree.set("parameters/Jump Blend/blend_amount", 0.5)
 		elif velocity.y < 0:
 			anim_tree.set("parameters/Jump Scale/scale", -0.25)
 			anim_tree.set("parameters/Jump Blend/blend_amount", clampf(-velocity.y * 0.2, 1, 0.8))
+			if aiming:
+				anim_tree.set("parameters/Jump Blend/blend_amount", clampf(0, 0.5, 0.8))
 	else:
 		anim_tree.set("parameters/Jump Blend/blend_amount", 0)
 
@@ -180,13 +227,19 @@ func _physics_process(delta: float) -> void:
 		velocity.x = lerp(velocity.x, 0.0, LERP_VAL)
 		velocity.z = lerp(velocity.z, 0.0, LERP_VAL)
 	
-	# match rotation to camera if aiming
+	# match rotation to camera if aiming and show reticle
 	if aiming:
 		armature.rotation.y = pivot.rotation.y - deg_to_rad(180)
+		body_rotation_mod.target_coordinate = aim_target.global_position
+		body_rotation_mod.influence = 1
+		reticle.visible = true
+	else:
+		armature.rotation.x = 0
+		body_rotation_mod.influence = 0
+		reticle.visible = false
 	
 	# update hand positions
-	main_hand_pos = skeleton.get_bone_global_pose(10).origin
-	main_hand_rot = skeleton.get_bone_global_pose(10).basis
-	main_hand_offset = skeleton.get_bone_global_pose(10).origin.x
+	main_hand_transform = _calc_local_bone_transform(main_hand_bone_id)
+	off_hand_transform = _calc_local_bone_transform(off_hand_bone_id)
 	
 	move_and_slide()

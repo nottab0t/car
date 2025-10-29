@@ -19,7 +19,7 @@ func _physics_process(_delta: float) -> void:
 	$HBoxContainer/DebugOutput/Fps.text = str(fps) + " fps"
 	
 	# help display
-	var car_speed = car.get_speed()
+	var car_speed = car.speed
 	$HBoxContainer/DebugOutput/SpeedBar.value = car_speed
 	car_speed = int(car_speed)
 	$HBoxContainer/DebugOutput/SpeedNumber.text = str(car_speed) + " speed"
