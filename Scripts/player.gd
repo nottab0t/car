@@ -35,10 +35,6 @@ var off_hand_bone := "hand.l"
 var upperbody_bone := "body"
 @onready var upperbody_bone_id := skeleton.find_bone(upperbody_bone)
 
-# hand positions
-var main_hand_transform : Transform3D
-var off_hand_transform : Transform3D
-
 # animations
 var anim_arm_blend := "parameters/Arm Blend/blend_amount"
 # static anims
@@ -178,8 +174,6 @@ func _physics_process(delta: float) -> void:
 		aiming = false
 		anim_tree.set(aim_anim, 0)
 	
-	
-	
 	# walk & run animations
 	if aiming:
 		anim_tree.set(walk_anim, (velocity.length() / 5) * 0.7)
@@ -193,20 +187,23 @@ func _physics_process(delta: float) -> void:
 	# jump
 	if Input.is_action_just_pressed("jump") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
-
+	
 	# jump/fall animation
 	if not is_on_floor():
 		anim_tree.set(walk_anim, 0)
 		anim_tree.set(run_anim, 0)
+		# set held anims if needed
 		if not held_anim_run == "none": 
 			anim_tree.set(held_anim, 0)
 			anim_tree.set(held_anim_run, 1)
 		
+		# rising
 		if velocity.y > 0:
 			anim_tree.set("parameters/Jump Scale/scale", 0.5)
 			anim_tree.set("parameters/Jump Blend/blend_amount", 1)
 			if aiming:
 				anim_tree.set("parameters/Jump Blend/blend_amount", 0.5)
+		# falling
 		elif velocity.y < 0:
 			anim_tree.set("parameters/Jump Scale/scale", -0.25)
 			anim_tree.set("parameters/Jump Blend/blend_amount", clampf(-velocity.y * 0.2, 1, 0.8))
@@ -214,7 +211,7 @@ func _physics_process(delta: float) -> void:
 				anim_tree.set("parameters/Jump Blend/blend_amount", clampf(0, 0.5, 0.8))
 	else:
 		anim_tree.set("parameters/Jump Blend/blend_amount", 0)
-
+	
 	# Get the input direction and handle the movement/deceleration
 	var input_dir := Input.get_vector("walk_left", "walk_right", "walk_forward", "walk_backward")
 	var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
@@ -237,9 +234,5 @@ func _physics_process(delta: float) -> void:
 		armature.rotation.x = 0
 		body_rotation_mod.influence = 0
 		reticle.visible = false
-	
-	# update hand positions
-	main_hand_transform = _calc_local_bone_transform(main_hand_bone_id)
-	off_hand_transform = _calc_local_bone_transform(off_hand_bone_id)
 	
 	move_and_slide()

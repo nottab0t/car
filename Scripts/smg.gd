@@ -42,11 +42,9 @@ func _ready() -> void:
 	grip_offset = main_grip.position
 	main = get_parent()
 
-
-func _match_position_to_hand() -> void:
+func _match_position_to_main_hand() -> void:
 	if equipped:
 		transform = player.skeleton.get_bone_global_pose(player.main_hand_bone_id) * player.skeleton.transform
-	
 
 # called via signal when player is no longer nearby
 func _left_player_area(_body: Node3D):
@@ -60,11 +58,6 @@ func _physics_process(_delta: float) -> void:
 	else: label.text = default_text
 	
 	if equipped:
-		# match position and basis to player main hand
-		#transform = player.main_hand_transform
-		## new
-		
-		
 		# drop item only if equipped
 		if Input.is_action_pressed("drop_item"):
 			equipped = false
@@ -103,6 +96,6 @@ func _physics_process(_delta: float) -> void:
 		player.hold_item_anim(self)
 		player.holding_item = true
 		player.equipped_item = self
-		if player.skeleton.skeleton_updated.is_connected(_match_position_to_hand): return
-		player.skeleton.skeleton_updated.connect(_match_position_to_hand)
+		if player.skeleton.skeleton_updated.is_connected(_match_position_to_main_hand): return
+		player.skeleton.skeleton_updated.connect(_match_position_to_main_hand)
 		
