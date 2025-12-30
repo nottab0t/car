@@ -88,7 +88,7 @@ func _body_exited(body: Node3D):
 	body.label.visible = false
 
 func _ready() -> void:
-	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	pass
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not main.control_mode == "player": return

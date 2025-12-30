@@ -29,6 +29,7 @@ fog_depth_end = 200.0
 [sub_resource type="Compositor" id="Compositor_344ge"]
 
 [node name="Main" type="Node"]
+process_mode = 3
 script = ExtResource("1_8gbba")
 
 [node name="Sun" type="DirectionalLight3D" parent="."]
@@ -45,12 +46,13 @@ layout_mode = 3
 anchors_preset = 0
 size_flags_horizontal = 6
 size_flags_vertical = 6
+mouse_filter = 2
 script = ExtResource("4_jjvhh")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="UI"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+offset_right = 554.0
+offset_bottom = 206.0
 
 [node name="DebugOutput" type="VBoxContainer" parent="UI/HBoxContainer"]
 custom_minimum_size = Vector2(100, 0)
@@ -66,6 +68,13 @@ layout_mode = 2
 [node name="SpeedBar" type="ProgressBar" parent="UI/HBoxContainer/DebugOutput"]
 layout_mode = 2
 max_value = 60.0
+
+[node name="Paused" type="Label" parent="UI/HBoxContainer/DebugOutput"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+text = "Paused"
 
 [node name="Help" type="VBoxContainer" parent="UI/HBoxContainer"]
 layout_mode = 2
@@ -91,12 +100,16 @@ camera_attributes = SubResource("CameraAttributesPractical_6bp64")
 compositor = SubResource("Compositor_344ge")
 
 [node name="Car" parent="." instance=ExtResource("4_21xkr")]
+process_mode = 1
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
 [node name="Terrain" parent="." instance=ExtResource("5_kry3j")]
+process_mode = 1
 
 [node name="Player" parent="." instance=ExtResource("6_21xkr")]
+process_mode = 1
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.874264, 1, -2.4488125)
 
 [node name="smg" parent="." instance=ExtResource("6_6bp64")]
+process_mode = 1
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.0034599, 0.17251535, -6.496609)
